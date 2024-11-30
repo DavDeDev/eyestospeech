@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import WordTile from '@/components/WordTile'
 import { speak } from '@/lib/speech'
-import { fetchNewWords } from '@/lib/fetchWords'
+import { getFourWords } from '@/lib/fetchWords'
 import { Card } from '@/components/ui/card'
 
 export default function Home() {
@@ -20,10 +20,16 @@ export default function Home() {
       setGazePosition({ x: data.x, y: data.y })
     }).begin()
 
-    fetchNewWords().then(newWords => {
+    // fetchNewWords().then(newWords => {
+    //   setWords(newWords)
+    //   setIsLoading(false)
+    // })
+
+    getFourWords(sentence.join(" ")).then(newWords => {
+      console.log(newWords)
       setWords(newWords)
       setIsLoading(false)
-    })
+    }) // Pre-fetch words for the first sentence
 
     return () => {
       window.webgazer.end()
@@ -39,7 +45,7 @@ export default function Home() {
     speak(word)
     setSentence(prev => [...prev, word])
     setIsLoading(true)
-    const newWords = await fetchNewWords()
+    const newWords = await getFourWords(sentence.join(" ").concat(" ", word))
     setWords(newWords)
     setIsLoading(false)
   }
@@ -55,13 +61,13 @@ export default function Home() {
           {sentence.length > 0 ? sentence.join(' ') : 'Look at words to form a sentence'}
         </Card>
       </div>
-      
+
       <div className="h-full grid grid-cols-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         {words.map((word, index) => (
-          <WordTile 
-            key={index} 
-            word={word} 
-            onSelect={handleWordSelected} 
+          <WordTile
+            key={index}
+            word={word}
+            onSelect={handleWordSelected}
             gazePosition={gazePosition}
           />
         ))}

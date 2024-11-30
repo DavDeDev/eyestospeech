@@ -1,14 +1,23 @@
-const wordList = [
-  'The', 'quick', 'brown', 'fox', 'jumps', 'over', 'lazy', 'dog',
-  'A', 'journey', 'of', 'thousand', 'miles', 'begins', 'with', 'single', 'step',
-  'To', 'be', 'or', 'not', 'that', 'is', 'question', 'Whether',
-  'All', 'world\'s', 'stage', 'and', 'men', 'women', 'merely', 'players'
-]
+export async function getFourWords(sentence: string): Promise<string[]> {
+  console.log("[frontend] sentence:,", sentence)
+  try {
+    const response = await fetch('/api/word-suggestions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ sentence }),
+    })
 
-export async function fetchNewWords(): Promise<string[]> {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 500))
-  // We will call open AI API here
-  // Return 4 random words
-  return Array.from({ length: 4 }, () => wordList[Math.floor(Math.random() * wordList.length)])
+    if (!response.ok) {
+      throw new Error('Failed to fetch word suggestions')
+    }
+
+    const words = await response.json()
+    return words
+  } catch (error) {
+    console.error('Error fetching words:', error)
+    // Fallback words if API fails
+    return ['and', 'the', 'to', 'of']
+  }
 }
