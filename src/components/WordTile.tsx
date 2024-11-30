@@ -28,7 +28,7 @@ export default function WordTile({ word, onSelect, gazePosition }: WordTileProps
       if (!gazeTimerRef.current) {
         // gazeTimerRef.current = setInterval(() => {
           setGazeProgress(prev => {
-            const newProgress = prev + 1
+            const newProgress = prev + 5
             if (newProgress >= 100) {
               clearInterval(gazeTimerRef.current!)
               gazeTimerRef.current = null
