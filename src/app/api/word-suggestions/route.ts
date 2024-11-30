@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       });
     }
 
-    const prompt = `I am a ive me the best 4 options to continue the sentence: ${sentence}`;
+    const prompt = `I am a ive me the best 4 options to continue the sentence, words should repeat: ${sentence}`;
 
     const result = await generateObject({
       model: openai('gpt-4o-2024-08-06'),
