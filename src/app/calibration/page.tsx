@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { useCalibration } from '@/context/CalibrationContext';
 
 declare global {
   interface Window {
@@ -12,7 +13,9 @@ declare global {
 
 export default function CaliberPage() {
   const [isCalibrating, setIsCalibrating] = useState(false)
-  const [isCalibrated, setIsCalibrated] = useState(false)
+
+  const { isCalibrated, setIsCalibrated } = useCalibration()
+  
 
   useEffect(() => {
     // Load WebGazer script
@@ -43,20 +46,20 @@ export default function CaliberPage() {
         if (data == null) {
           return
         }
-        var xprediction = data.x //these x coordinates are relative to the viewport
-        var yprediction = data.y //these y coordinates are relative to the viewport
-        console.log("CIAOOO", timestamp, xprediction, yprediction) //elapsed time is based on time since begin was called
+        // var xprediction = data.x //these x coordinates are relative to the viewport
+        // var yprediction = data.y //these y coordinates are relative to the viewport
+        // console.log("CIAOOO", timestamp, xprediction, yprediction) //elapsed time is based on time since begin was called
       }).begin()
     }
 
     // Cleanup observer when component unmounts
-    return () => {
-      observer.disconnect()
-      if (window.webgazer) {
-        window.webgazer.end()
-      }
-      document.body.removeChild(script)
-    }
+    // return () => {
+    //   observer.disconnect()
+    //   if (window.webgazer) {
+    //     window.webgazer.end()
+    //   }
+    //   document.body.removeChild(script)
+    // }
   }, [])
 
   const startCalibration = () => {
@@ -69,7 +72,7 @@ export default function CaliberPage() {
     setIsCalibrating(false)
     setIsCalibrated(true)
     // End WebGazer calibration
-    window.webgazer.showPredictionPoints(false)
+    window.webgazer.showPredictionPoints(true)
   }
 
   return (

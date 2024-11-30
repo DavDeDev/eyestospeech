@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import WordTile from '@/components/WordTile'
 import { speak } from '@/lib/speech'
 import { fetchNewWords } from '@/lib/fetchWords'
@@ -10,12 +10,29 @@ export default function Home() {
   const [words, setWords] = useState<string[]>([])
   const [sentence, setSentence] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [gazePosition, setGazePosition] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
+    window.webgazer.setGazeListener((data: any, timestamp: number) => {
+      if (data == null) {
+        return
+      }
+      setGazePosition({ x: data.x, y: data.y })
+    }).begin()
+
     fetchNewWords().then(newWords => {
       setWords(newWords)
       setIsLoading(false)
     })
+
+    return () => {
+      window.webgazer.end()
+      // remove webgazer script
+      const script = document.querySelector('script[src="https://webgazer.cs.brown.edu/webgazer.js"]')
+      if (script) {
+        script.remove
+      }
+    }
   }, [])
 
   const handleWordSelected = async (word: string) => {
@@ -35,13 +52,18 @@ export default function Home() {
     <div className="h-screen flex flex-col">
       <div className="flex-grow p-4">
         <Card className="p-4 text-center text-lg bg-secondary/50 text-secondary-foreground">
-          {sentence.length > 0 ? sentence.join(' ') : 'Select words to form a sentence'}
+          {sentence.length > 0 ? sentence.join(' ') : 'Look at words to form a sentence'}
         </Card>
       </div>
       
-      <div className="h-full grid grid-cols-2 gap-4 p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="h-full grid grid-cols-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         {words.map((word, index) => (
-          <WordTile key={index} word={word} onSelect={handleWordSelected} />
+          <WordTile 
+            key={index} 
+            word={word} 
+            onSelect={handleWordSelected} 
+            gazePosition={gazePosition}
+          />
         ))}
       </div>
     </div>

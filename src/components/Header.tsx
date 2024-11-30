@@ -19,7 +19,9 @@ export default function Header() {
           <Link href="/calibration">
             <Button variant="outline">Calibrate</Button>
           </Link>
-          <Button disabled={!isCalibrated}>Start Conversation</Button>
+            <Link href="/conversation">
+            <Button disabled={!isCalibrated}>Start Conversation</Button>
+            </Link>
           <Link href="/settings">
             <Button variant="ghost">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
