@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect, useRef } from 'react'
 import { Card } from '@/components/ui/card'
 
@@ -19,32 +18,33 @@ export default function WordTile({ word, onSelect, gazePosition }: WordTileProps
     if (!tileElement) return
 
     const { left, top, right, bottom } = tileElement.getBoundingClientRect()
-    const isGazeOnTile = 
-      gazePosition.x >= left && 
-      gazePosition.x <= right && 
-      gazePosition.y >= top && 
+    const isGazeOnTile =
+      gazePosition.x >= left &&
+      gazePosition.x <= right &&
+      gazePosition.y >= top &&
       gazePosition.y <= bottom
 
     if (isGazeOnTile) {
       if (!gazeTimerRef.current) {
         // gazeTimerRef.current = setInterval(() => {
           setGazeProgress(prev => {
-            if (prev >= 100) {
+            const newProgress = prev + 1
+            if (newProgress >= 100) {
               clearInterval(gazeTimerRef.current!)
               gazeTimerRef.current = null
               onSelect(word)
               return 0
             }
-            return prev + (100 / 2000) * 100 // 100% in 3 seconds
+            return newProgress
           })
-        // }, 100)
+        // }, 20) // Update every 20ms, will take ~2 seconds to reach 100%
       }
     } else {
       if (gazeTimerRef.current) {
         clearInterval(gazeTimerRef.current)
         gazeTimerRef.current = null
+        setGazeProgress(0)
       }
-      setGazeProgress(0)
     }
 
     return () => {
@@ -67,4 +67,3 @@ export default function WordTile({ word, onSelect, gazePosition }: WordTileProps
     </Card>
   )
 }
-
