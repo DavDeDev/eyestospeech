@@ -37,7 +37,7 @@ export default function WordTile({ word, onSelect, gazePosition }: WordTileProps
             }
             return newProgress
           })
-        // }, 20) // Update every 20ms, will take ~2 seconds to reach 100%
+        // }, 50)
       }
     } else {
       if (gazeTimerRef.current) {
@@ -58,12 +58,11 @@ export default function WordTile({ word, onSelect, gazePosition }: WordTileProps
     <Card
       ref={tileRef}
       className="relative flex justify-center items-center text-xl font-medium overflow-hidden h-full"
+      style={{ 
+        background: `linear-gradient(to right, black ${gazeProgress}%, white ${gazeProgress}%)` 
+      }}
     >
-      <div className="text-center">{word}</div>
-      <div
-        className="absolute bottom-0 left-0 h-1 bg-primary transition-all duration-100"
-        style={{ width: `${gazeProgress}%` }}
-      />
+      <div className="text-center bg-white z-10">{word}</div>
     </Card>
   )
 }
