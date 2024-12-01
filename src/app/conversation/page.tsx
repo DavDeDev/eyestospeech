@@ -5,6 +5,7 @@ import WordTile from '@/components/WordTile'
 import { speak } from '@/lib/speech'
 import { getFourWords } from '@/lib/fetchWords'
 import { Card } from '@/components/ui/card'
+import LoadingSkeleton from '@/components/LoadingSkeleton'
 
 export default function Home() {
   const [words, setWords] = useState<string[]>([])
@@ -50,10 +51,6 @@ export default function Home() {
     setIsLoading(false)
   }
 
-  if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>
-  }
-
   return (
     <div className="h-screen flex flex-col">
       <div className="flex-grow p-4">
@@ -63,14 +60,18 @@ export default function Home() {
       </div>
 
       <div className="h-full grid grid-cols-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        {words.map((word, index) => (
-          <WordTile
-            key={index}
-            word={word}
-            onSelect={handleWordSelected}
-            gazePosition={gazePosition}
-          />
-        ))}
+      {isLoading ? (
+            <LoadingSkeleton />
+          ) : (
+            words.map((word, index) => (
+              <WordTile
+                key={index}
+                word={word}
+                onSelect={handleWordSelected}
+                gazePosition={gazePosition}
+              />
+            ))
+          )}
       </div>
     </div>
   )
